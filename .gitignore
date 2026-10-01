@@ -1,0 +1,50 @@
+# ==========================================
+# ROS 2 Build, Install and Log Artifacts
+# ==========================================
+build/
+**/build/
+install/
+**/install/
+log/
+**/log/
+.colcon/
+**/COLCON_IGNORE
+
+# ==========================================
+# Python Bytecode and Packaging
+# ==========================================
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+**/*.egg-info/
+.eggs/
+dist/
+*.egg
+
+# ==========================================
+# Testing & Coverage
+# ==========================================
+.pytest_cache/
+**/.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# IDEs and Editors
+# ==========================================
+.idea/
+**/.idea/
+.vscode/
+**/.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ==========================================
+# Carpetas de trabajo temporal / scratch
+# ==========================================
+practica\ 1/entrega/
+**/entrega/
