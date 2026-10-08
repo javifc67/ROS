@@ -44,7 +44,13 @@ htmlcov/
 .DS_Store
 
 # ==========================================
-# Carpetas de trabajo temporal / scratch
+# Carpetas de trabajo temporal / scratch / Bags
 # ==========================================
 practica\ 1/entrega/
 **/entrega/
+OneDrive_*/
+*.db3
+*.crdownload
+**/rosbag2_*/
+*.mcap
+*.bag

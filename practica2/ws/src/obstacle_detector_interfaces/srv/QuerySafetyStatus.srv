@@ -1,0 +1,8 @@
+# Request
+string sensor_filter
+---
+# Response
+bool safe_to_proceed
+float32 closest_distance
+string alert_level
+string message
