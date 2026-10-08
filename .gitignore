@@ -51,6 +51,5 @@ practica\ 1/entrega/
 OneDrive_*/
 *.db3
 *.crdownload
-**/rosbag2_*/
 *.mcap
 *.bag
