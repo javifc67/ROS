@@ -7,6 +7,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WS_DIR="$SCRIPT_DIR/ws"
 BAG_DIR="$SCRIPT_DIR/rosbag2_2025_02_27-13_08_14"
 
+# Cargar entorno base de ROS si existe en el sistema
+source /opt/ros/humble/setup.bash 2>/dev/null || source /opt/ros/jazzy/setup.bash 2>/dev/null || true
+
 # Si ROS 2 no esta instalado de forma nativa en el host, ejecutar transparentemente dentro del contenedor Docker
 if ! command -v ros2 >/dev/null 2>&1; then
     echo "=========================================================="
@@ -29,8 +32,6 @@ fi
 echo "=========================================================="
 echo "  PRACTICA 2: DETECCION Y FUSION DE OBSTACULOS EN ROS 2"
 echo "=========================================================="
-
-source /opt/ros/jazzy/setup.bash 2>/dev/null || source /opt/ros/humble/setup.bash 2>/dev/null || true
 
 if [ ! -d "$WS_DIR/install" ]; then
     echo "=== Compilando el espacio de trabajo con colcon build ==="

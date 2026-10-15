@@ -105,7 +105,10 @@ class LidarObstacleDetector(Node):
         """Procesa cada mensaje de PointCloud2 del LIDAR."""
         try:
             # Extraccion eficiente de coordenadas XYZ usando numpy
-            pts = pc2.read_points_numpy(msg, field_names=['x', 'y', 'z'])
+            struct_arr = pc2.read_points(msg, field_names=['x', 'y', 'z'], skip_nans=False)
+            if struct_arr.size == 0:
+                return
+            pts = np.column_stack((struct_arr['x'], struct_arr['y'], struct_arr['z']))
             if pts.size == 0:
                 return
 
@@ -179,7 +182,8 @@ def main(args=None):
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

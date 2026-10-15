@@ -1,0 +1,598 @@
+rosbag2_bagfile_information:
+  version: 9
+  storage_identifier: sqlite3
+  duration:
+    nanoseconds: 109422295019
+  starting_time:
+    nanoseconds_since_epoch: 1740658094634851924
+  message_count: 35031
+  topics_with_message_count:
+    - topic_metadata:
+        name: /diagnostics
+        type: diagnostic_msgs/msg/DiagnosticArray
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 108
+    - topic_metadata:
+        name: /events/write_split
+        type: rosbag2_interfaces/msg/WriteSplitEvent
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/blaze_camera_info
+        type: sensor_msgs/msg/CameraInfo
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/blaze_cloud
+        type: sensor_msgs/msg/PointCloud2
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/blaze_confidence
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/blaze_depth_map
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/blaze_depth_map_color
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/blaze_intensity
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/camera_info
+        type: sensor_msgs/msg/CameraInfo
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 3253
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/current_params
+        type: pylon_ros2_camera_interfaces/msg/CurrentParams
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 3253
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/image_raw
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 3253
+    - topic_metadata:
+        name: /my_camera/pylon_ros2_camera_node/status
+        type: pylon_ros2_camera_interfaces/msg/ComponentStatus
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 3253
+    - topic_metadata:
+        name: /ouster/imu
+        type: sensor_msgs/msg/Imu
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 10943
+    - topic_metadata:
+        name: /ouster/metadata
+        type: std_msgs/msg/String
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 1
+    - topic_metadata:
+        name: /ouster/nearir_image
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 2189
+    - topic_metadata:
+        name: /ouster/os_driver/transition_event
+        type: lifecycle_msgs/msg/TransitionEvent
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /ouster/points
+        type: sensor_msgs/msg/PointCloud2
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 2189
+    - topic_metadata:
+        name: /ouster/range_image
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 2189
+    - topic_metadata:
+        name: /ouster/reflec_image
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 2189
+    - topic_metadata:
+        name: /ouster/signal_image
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 2189
+    - topic_metadata:
+        name: /parameter_events
+        type: rcl_interfaces/msg/ParameterEvent
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 0
+    - topic_metadata:
+        name: /rosout
+        type: rcl_interfaces/msg/Log
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 10
+              nsec: 0
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 10
+              nsec: 0
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 10
+              nsec: 0
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 10
+              nsec: 0
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 21
+    - topic_metadata:
+        name: /tf_static
+        type: tf2_msgs/msg/TFMessage
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 10
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: ""
+      message_count: 1
+  compression_format: ""
+  compression_mode: ""
+  relative_file_paths:
+    - rosbag2_2025_02_27-13_08_14_0.db3
+  files:
+    []
+  custom_data: ~
+  ros_distro: humble
