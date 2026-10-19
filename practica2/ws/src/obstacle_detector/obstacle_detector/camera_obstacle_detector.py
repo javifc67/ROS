@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Nodo de deteccion visual de obstaculos mediante camara RGB (Basler Blaze).
-Procesa la transmision de video de la camara, detecta contornos y regiones
-de obstaculos frontales mediante vision por computador (OpenCV) y publica alertas
-en el topic /obstacles/camera junto a la imagen anotada para visualizacion.
-Soporta reconfiguracion de parametros en tiempo de ejecucion.
+Nodo de deteccion visual de obstaculos mediante camara RGB (Basler Blaze) o Infrarroja (Near-IR Ouster).
+Procesa la transmision de video, detecta contornos y regiones de obstaculos frontales
+mediante vision por computador (OpenCV) y publica alertas en el topic /obstacles/camera
+junto a la imagen anotada para visualizacion.
+Soporta reconfiguracion de parametros en tiempo de ejecucion y cambio de fuente (RGB/IR).
 """
 
 import math
@@ -21,13 +21,14 @@ from obstacle_detector_interfaces.msg import ObstacleInfo
 
 class CameraObstacleDetector(Node):
     """
-    Nodo que procesa imagenes RGB de la camara para deteccion visual de obstaculos.
+    Nodo que procesa imagenes RGB o IR de la camara para deteccion visual de obstaculos.
     """
 
     def __init__(self):
         super().__init__('camera_obstacle_detector')
 
         # Parametros configurables dinamicamente
+        self.declare_parameter('image_topic', '/my_camera/pylon_ros2_camera_node/image_raw')
         self.declare_parameter('min_contour_area', 3000.0)
         self.declare_parameter('warning_area', 25000.0)
         self.declare_parameter('danger_area', 70000.0)
@@ -39,10 +40,10 @@ class CameraObstacleDetector(Node):
 
         self.bridge = CvBridge()
 
-        # Suscriptor al topic de camara del bag
+        # Suscriptor al topic de camara configurado (RGB o Infrarrojo)
         self.subscription = self.create_subscription(
             Image,
-            '/my_camera/pylon_ros2_camera_node/image_raw',
+            self.image_topic,
             self._image_callback,
             10
         )
@@ -62,7 +63,7 @@ class CameraObstacleDetector(Node):
         )
 
         self.get_logger().info(
-            'CameraObstacleDetector inicializado. '
+            f'CameraObstacleDetector inicializado en topic "{self.image_topic}". '
             f'Area Minima: {self.min_contour_area:.0f}px, '
             f'Aviso: {self.warning_area:.0f}px, '
             f'Peligro: {self.danger_area:.0f}px'
@@ -70,6 +71,7 @@ class CameraObstacleDetector(Node):
 
     def _load_parameters(self):
         """Carga y almacena los parametros del nodo."""
+        self.image_topic = str(self.get_parameter('image_topic').value)
         self.min_contour_area = float(self.get_parameter('min_contour_area').value)
         self.warning_area = float(self.get_parameter('warning_area').value)
         self.danger_area = float(self.get_parameter('danger_area').value)
@@ -79,7 +81,7 @@ class CameraObstacleDetector(Node):
     def _on_parameters_change(self, params):
         """Callback ejecutado cuando se modifica un parametro dinamicamente con ros2 param set."""
         for param in params:
-            self.get_logger().info(f'Actualizando parametro dinámico de camara "{param.name}" -> {param.value}')
+            self.get_logger().info(f'Actualizando parametro dinamico de camara "{param.name}" -> {param.value}')
             if param.name == 'min_contour_area':
                 self.min_contour_area = float(param.value)
             elif param.name == 'warning_area':
@@ -94,11 +96,29 @@ class CameraObstacleDetector(Node):
         return SetParametersResult(successful=True)
 
     def _image_callback(self, msg: Image):
-        """Procesa cada fotograma recibido de la camara."""
+        """Procesa cada fotograma recibido de la camara (RGB o IR)."""
         try:
-            # Conversion de mensaje ROS a imagen OpenCV
-            cv_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            is_ir = ('nearir' in self.image_topic.lower()) or (msg.encoding in ['mono16', '16UC1'])
+
+            # Conversion adaptativa segun encoding de la fuente (RGB vs Near-IR 16-bit)
+            if msg.encoding in ['mono16', '16UC1']:
+                raw_mono = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+                p2, p98 = np.percentile(raw_mono, (2, 98))
+                norm = np.clip((raw_mono.astype(np.float32) - p2) / (p98 - p2 + 1e-5) * 255.0, 0, 255).astype(np.uint8)
+                cv_img = cv2.applyColorMap(norm, cv2.COLORMAP_INFERNO)
+            elif msg.encoding in ['mono8', '8UC1']:
+                raw_mono = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+                cv_img = cv2.cvtColor(raw_mono, cv2.COLOR_GRAY2BGR)
+            else:
+                cv_img = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+
             height, width, _ = cv_img.shape
+
+            # Escala adaptativa de areas segun la resolucion del sensor
+            scale_res = (width * height) / (1920.0 * 1200.0)
+            eff_min_area = max(60.0, self.min_contour_area * scale_res)
+            eff_warning_area = max(300.0, self.warning_area * scale_res)
+            eff_danger_area = max(800.0, self.danger_area * scale_res)
 
             # Definicion de ROI: zona frontal de trayectoria (parte inferior de la imagen)
             roi_y_start = int(height * self.roi_top_ratio)
@@ -107,9 +127,9 @@ class CameraObstacleDetector(Node):
             # Preprocesamiento: escala de grises, blur y deteccion de bordes con Canny
             gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
             blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-            edges = cv2.Canny(blurred, 50, 150)
+            edges = cv2.Canny(blurred, 40, 130)
 
-            # Operacion morfologica para agrupar contornos
+            # Operacion morfologica para cerrar contornos de objetos
             kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
             dilated = cv2.dilate(edges, kernel, iterations=2)
 
@@ -121,41 +141,43 @@ class CameraObstacleDetector(Node):
 
             for cnt in contours:
                 area = cv2.contourArea(cnt)
-                if area > self.min_contour_area and area > max_area:
+                if area > eff_min_area and area > max_area:
                     max_area = area
                     best_bbox = cv2.boundingRect(cnt)
 
             out_msg = ObstacleInfo()
             out_msg.header = msg.header
-            out_msg.sensor_type = 'camera'
+            out_msg.sensor_type = 'camera_ir' if is_ir else 'camera_rgb'
+
+            sensor_label = 'INFRARROJO (IR)' if is_ir else 'CAMARA RGB'
 
             if best_bbox is not None:
                 bx, by, bw, bh = best_bbox
-                # Reajustar coordenadas globales de la imagen completa
                 global_by = by + roi_y_start
 
                 out_msg.obstacle_detected = True
-                # Estimacion aproximada de distancia inversamente proporcional al tamano visual
-                estimated_distance = max(0.5, float(500.0 / math.sqrt(max_area)))
+                # Estimacion aproximada de distancia inversamente proporcional al tamano relativo
+                norm_area = max_area / max(1.0, scale_res)
+                estimated_distance = max(0.5, float(500.0 / math.sqrt(norm_area)))
                 out_msg.distance = estimated_distance
 
-                # Normalizar posicion relativa en el campo de vision
+                # Normalizar posicion relativa horizontal [-1.0, 1.0]
                 out_msg.x = estimated_distance
                 out_msg.y = float((bx + bw / 2.0 - width / 2.0) / (width / 2.0))
                 out_msg.z = 0.0
 
-                if max_area >= self.danger_area:
+                if max_area >= eff_danger_area:
                     out_msg.severity = 'DANGER'
                     box_color = (0, 0, 255)  # Rojo
                     self.get_logger().error(
-                        f'[CAMARA-PELIGRO] Obstaculo visual grande (Area: {max_area:.0f}px, Dist est: {estimated_distance:.2f}m)',
+                        f'[{sensor_label}-PELIGRO] Obstaculo visual critico (Area: {max_area:.0f}px, Dist est: {estimated_distance:.2f}m)',
                         throttle_duration_sec=1.0
                     )
-                elif max_area >= self.warning_area:
+                elif max_area >= eff_warning_area:
                     out_msg.severity = 'WARNING'
                     box_color = (0, 165, 255)  # Naranja
                     self.get_logger().warn(
-                        f'[CAMARA-AVISO] Obstaculo visual detectado (Area: {max_area:.0f}px, Dist est: {estimated_distance:.2f}m)',
+                        f'[{sensor_label}-AVISO] Obstaculo visual detectado (Area: {max_area:.0f}px, Dist est: {estimated_distance:.2f}m)',
                         throttle_duration_sec=1.0
                     )
                 else:
@@ -164,12 +186,13 @@ class CameraObstacleDetector(Node):
 
                 if self.publish_annotated_image:
                     cv2.rectangle(cv_img, (bx, global_by), (bx + bw, global_by + bh), box_color, 3)
+                    label_text = f'{out_msg.severity} - {estimated_distance:.1f}m ({int(max_area)}px)'
                     cv2.putText(
                         cv_img,
-                        f'{out_msg.severity} - {estimated_distance:.1f}m ({int(max_area)}px)',
+                        label_text,
                         (bx, max(30, global_by - 10)),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        0.8,
+                        0.75,
                         box_color,
                         2
                     )
@@ -185,14 +208,14 @@ class CameraObstacleDetector(Node):
 
             # Publicar imagen anotada para visualizacion si esta habilitado
             if self.publish_annotated_image:
-                # Dibujar linea de inicio de la ROI
+                # Linea de delimitacion de la ROI
                 cv2.line(cv_img, (0, roi_y_start), (width, roi_y_start), (255, 255, 0), 2)
                 cv2.putText(
                     cv_img,
-                    f'ROI Detector Camara | Estado: {out_msg.severity}',
-                    (20, 40),
+                    f'ROI Detector {sensor_label} | Estado: {out_msg.severity} | Topic: {self.image_topic}',
+                    (20, 36),
                     cv2.FONT_HERSHEY_SIMPLEX,
-                    0.9,
+                    0.8,
                     (255, 255, 255),
                     2
                 )
