@@ -26,7 +26,6 @@ setup(
             'lidar_obstacle_detector = obstacle_detector.lidar_obstacle_detector:main',
             'camera_obstacle_detector = obstacle_detector.camera_obstacle_detector:main',
             'obstacle_manager = obstacle_detector.obstacle_manager:main',
-            'ros_system_recorder = obstacle_detector.ros_system_recorder:main',
         ],
     },
 )
