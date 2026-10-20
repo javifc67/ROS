@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script de Demostracion Visual Completa para la Practica 2
-# Lanza: Nodos de deteccion + RViz2 (LIDAR 3D) + Visor de Camara + Rosbag en bucle
+# Lanza: Nodos de deteccion + RViz2 (LIDAR 3D) + Ventana Camara YOLO + Rosbag Loop
 # ==============================================================================
 
 set -e
@@ -36,38 +36,31 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-# 1. Lanzar nodos de deteccion (LIDAR, Camara y Gestor de Seguridad)
-echo "[1/4] Lanzando nodos de deteccion y fusion..."
+# 1. Lanzar bolsa sensorial en segundo plano (para que los datos ya esten fluyendo)
+echo "[1/3] Iniciando reproduccion de bolsa sensorial (LIDAR + Camara)..."
+ros2 bag play "$BAG_DIR" \
+    --topics /ouster/points /my_camera/pylon_ros2_camera_node/image_raw /tf_static \
+    --rate 1.0 \
+    --loop >/dev/null 2>&1 &
+PIDS+=($!)
+sleep 2
+
+# 2. Lanzar nodos de deteccion (LIDAR, Camara con YOLO y Gestor)
+echo "[2/3] Lanzando nodos de deteccion y abriendo ventana de camara..."
 ros2 launch obstacle_detector obstacle_detection.launch.py &
 PIDS+=($!)
 sleep 2
 
-# 2. Lanzar RViz2 con el perfil visual preconfigurado
-echo "[2/4] Abriendo visualizador 3D RViz2 (LIDAR PointCloud)..."
+# 3. Lanzar RViz2 con el perfil 3D preconfigurado
+echo "[3/3] Abriendo visualizador 3D RViz2 (LIDAR PointCloud)..."
 rviz2 -d "$RVIZ_CFG" >/dev/null 2>&1 &
 PIDS+=($!)
-sleep 2
 
-# 3. Lanzar visor de camara con las anotaciones de deteccion
-echo "[3/4] Abriendo ventana de deteccion de Camara..."
-ros2 run rqt_image_view rqt_image_view /obstacles/camera/annotated_image >/dev/null 2>&1 &
-PIDS+=($!)
-sleep 1
-
-# 4. Reproducir el rosbag sensorial en bucle (--loop)
-echo "[4/4] Reproduciendo bolsa de datos sensoriales (LIDAR + Camara)..."
 echo "----------------------------------------------------------"
-echo "  * La reproduccion se ejecuta en bucle (--loop)."
-echo "  * Veras la nube de puntos 3D en RViz2 y la camara en rqt."
+echo "  * La reproduccion se ejecuta en bucle continuo (--loop)."
+echo "  * Se abrira la ventana interactiva 'Detección Cámara' con YOLO."
+echo "  * En RViz2 veras la nube de puntos 3D."
 echo "  * Pulsa Ctrl+C en esta terminal para cerrar todo."
 echo "----------------------------------------------------------"
 
-if [ -d "$BAG_DIR" ]; then
-    ros2 bag play "$BAG_DIR" \
-        --topics /ouster/points /my_camera/pylon_ros2_camera_node/image_raw /tf_static \
-        --rate 1.0 \
-        --loop
-else
-    echo "ERROR: No se encuentra la carpeta del rosbag en $BAG_DIR"
-    wait
-fi
+wait

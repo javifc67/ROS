@@ -4,8 +4,8 @@ Nodo de deteccion de obstaculos mediante Camara (RGB / Imagen).
 Implementa deteccion basada en Redes Neuronales Profundas (YOLOv8)
 para clasificacion de vehiculos (coches, camiones, autobuses, motos)
 y peatones, con estimacion de distancia y severidad de riesgo.
-Incluye fallback automatico a vision clasica por contornos (OpenCV)
-y soporte de parametros configurables en tiempo de ejecucion.
+Incluye visualizacion grafica nativa 'Deteccion Camara' (OpenCV / Qt),
+fallback automatico a contornos y publicacion de temas ROS 2.
 """
 
 import math
@@ -33,8 +33,7 @@ class CameraObstacleDetector(Node):
     Nodo que procesa imagenes RGB de la camara para deteccion visual de vehiculos y obstaculos.
     """
 
-    # Clases de interes de COCO (estandar autonomo / KITTI):
-    # 0: person, 1: bicycle, 2: car, 3: motorcycle, 5: bus, 7: truck
+    # Clases de interes de COCO / KITTI (vehiculos y peatones)
     TARGET_CLASSES = [0, 1, 2, 3, 5, 7]
 
     def __init__(self):
@@ -51,6 +50,7 @@ class CameraObstacleDetector(Node):
         self.declare_parameter('danger_area', 70000.0)
         self.declare_parameter('roi_top_ratio', 0.35)
         self.declare_parameter('publish_annotated_image', True)
+        self.declare_parameter('show_gui_window', True)
 
         self._load_parameters()
         self.add_on_set_parameters_callback(self._on_parameters_change)
@@ -114,6 +114,7 @@ class CameraObstacleDetector(Node):
         self.danger_area = float(self.get_parameter('danger_area').value)
         self.roi_top_ratio = float(self.get_parameter('roi_top_ratio').value)
         self.publish_annotated_image = bool(self.get_parameter('publish_annotated_image').value)
+        self.show_gui_window = bool(self.get_parameter('show_gui_window').value)
 
     def _on_parameters_change(self, params):
         """Callback ejecutado cuando se modifica un parametro dinamicamente con ros2 param set."""
@@ -139,6 +140,8 @@ class CameraObstacleDetector(Node):
                 self.roi_top_ratio = float(param.value)
             elif param.name == 'publish_annotated_image':
                 self.publish_annotated_image = bool(param.value)
+            elif param.name == 'show_gui_window':
+                self.show_gui_window = bool(param.value)
 
         return SetParametersResult(successful=True)
 
@@ -279,35 +282,34 @@ class CameraObstacleDetector(Node):
                     )
 
                 # Anotaciones graficas en la imagen
-                if self.publish_annotated_image:
-                    for det in detections:
-                        bx, by, bw, bh = det['bbox']
-                        sev = det['severity']
+                for det in detections:
+                    bx, by, bw, bh = det['bbox']
+                    sev = det['severity']
 
-                        if sev == 'DANGER':
-                            color = (0, 0, 255)  # Rojo
-                        elif sev == 'WARNING':
-                            color = (0, 165, 255)  # Naranja
-                        else:
-                            color = (255, 255, 0)  # Cyan / Amarillo
+                    if sev == 'DANGER':
+                        color = (0, 0, 255)  # Rojo
+                    elif sev == 'WARNING':
+                        color = (0, 165, 255)  # Naranja
+                    else:
+                        color = (255, 255, 0)  # Cyan / Amarillo
 
-                        cv2.rectangle(cv_img, (bx, by), (bx + bw, by + bh), color, 2)
+                    cv2.rectangle(cv_img, (bx, by), (bx + bw, by + bh), color, 2)
 
-                        # Etiqueta con fondo sólido para máxima legibilidad
-                        label = f"{det['class_name']} {det['confidence']:.2f} | {det['distance']:.1f}m"
-                        (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)
-                        label_y = max(th + 5, by - 6)
-                        cv2.rectangle(cv_img, (bx, label_y - th - 4), (bx + tw + 6, label_y + 4), color, -1)
-                        cv2.putText(
-                            cv_img,
-                            label,
-                            (bx + 3, label_y),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.55,
-                            (0, 0, 0),
-                            1,
-                            cv2.LINE_AA
-                        )
+                    # Etiqueta con fondo sólido para máxima legibilidad
+                    label = f"{det['class_name']} {det['confidence']:.2f} | {det['distance']:.1f}m"
+                    (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)
+                    label_y = max(th + 5, by - 6)
+                    cv2.rectangle(cv_img, (bx, label_y - th - 4), (bx + tw + 6, label_y + 4), color, -1)
+                    cv2.putText(
+                        cv_img,
+                        label,
+                        (bx + 3, label_y),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.55,
+                        (0, 0, 0),
+                        1,
+                        cv2.LINE_AA
+                    )
             else:
                 out_msg.obstacle_detected = False
                 out_msg.distance = float('inf')
@@ -318,25 +320,35 @@ class CameraObstacleDetector(Node):
 
             self.obstacle_pub.publish(out_msg)
 
-            # Publicar imagen con dashboard superior
+            # Barra superior de estado (HUD)
+            modo_str = "YOLOv8" if (self.use_yolo and self.yolo_model) else "Contornos"
+            hud_color = (0, 0, 220) if out_msg.severity == 'DANGER' else ((0, 150, 255) if out_msg.severity == 'WARNING' else (0, 180, 0))
+            cv2.rectangle(cv_img, (0, 0), (width, 42), (25, 25, 25), -1)
+            cv2.line(cv_img, (0, 42), (width, 42), hud_color, 2)
+
+            dist_text = f"{out_msg.distance:.2f}m" if out_msg.distance < 100 else "Libre"
+            status_str = f"Modo: {modo_str} | Estado: {out_msg.severity} | Dist. mas cercana: {dist_text} | Obj: {len(detections)}"
+            cv2.putText(cv_img, status_str, (15, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
+
+            # Ventana interactiva nativa OpenCV 'Detección Cámara' (tal como en el video de la practica)
+            if self.show_gui_window:
+                cv2.imshow("Detección Cámara", cv_img)
+                cv2.waitKey(1)
+
+            # Publicar imagen anotada para RViz con frame_id 'os_lidar' para evitar errores de transformacion TF
             if self.publish_annotated_image:
-                modo_str = "YOLOv8" if (self.use_yolo and self.yolo_model) else "Contornos"
-                hud_color = (0, 0, 220) if out_msg.severity == 'DANGER' else ((0, 150, 255) if out_msg.severity == 'WARNING' else (0, 180, 0))
-
-                # Barra superior de estado
-                cv2.rectangle(cv_img, (0, 0), (width, 42), (25, 25, 25), -1)
-                cv2.line(cv_img, (0, 42), (width, 42), hud_color, 2)
-
-                dist_text = f"{out_msg.distance:.2f}m" if out_msg.distance < 100 else "Libre"
-                status_str = f"Modo: {modo_str} | Estado: {out_msg.severity} | Dist. mas cercana: {dist_text} | Obj: {len(detections)}"
-                cv2.putText(cv_img, status_str, (15, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
-
                 annotated_msg = self.bridge.cv2_to_imgmsg(cv_img, encoding='bgr8')
-                annotated_msg.header = msg.header
+                annotated_msg.header.stamp = msg.header.stamp
+                annotated_msg.header.frame_id = 'os_lidar'
                 self.image_pub.publish(annotated_msg)
 
         except Exception as e:
             self.get_logger().error(f'Error en detector de camara: {str(e)}', throttle_duration_sec=2.0)
+
+    def destroy_node(self):
+        if self.show_gui_window:
+            cv2.destroyAllWindows()
+        super().destroy_node()
 
 
 def main(args=None):
