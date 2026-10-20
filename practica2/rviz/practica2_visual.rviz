@@ -133,7 +133,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 35; 35; 38
-    Fixed Frame: os_lidar
+    Fixed Frame: os_sensor
     Frame Rate: 30
   Name: root
   Tools:

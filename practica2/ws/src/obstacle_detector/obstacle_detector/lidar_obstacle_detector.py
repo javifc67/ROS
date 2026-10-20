@@ -131,24 +131,36 @@ class LidarObstacleDetector(Node):
             if pts.size == 0:
                 return
 
-            # Mascara de puntos finitos y filtrado de la Region of Interest (ROI)
+            # Mascara de puntos finitos
             valid = np.isfinite(pts).all(axis=1)
             pts_finite = pts[valid]
 
+            # Transformacion a marco frontal de avance del vehiculo (os_sensor):
+            # En el Ouster LiDAR, os_lidar tiene una rotacion de 180 deg en yaw respecto a os_sensor.
+            # En os_sensor: +X es hacia adelante (avance), +Y es hacia la izquierda, +Z hacia arriba.
+            pts_sensor = np.empty_like(pts_finite)
+            pts_sensor[:, 0] = -pts_finite[:, 0]
+            pts_sensor[:, 1] = -pts_finite[:, 1]
+            pts_sensor[:, 2] = pts_finite[:, 2] - 0.038
+
             mask_roi = (
-                (pts_finite[:, 0] >= self.roi_x_min) &
-                (pts_finite[:, 0] <= self.roi_x_max) &
-                (pts_finite[:, 1] >= self.roi_y_min) &
-                (pts_finite[:, 1] <= self.roi_y_max) &
-                (pts_finite[:, 2] >= self.roi_z_min) &
-                (pts_finite[:, 2] <= self.roi_z_max)
+                (pts_sensor[:, 0] >= self.roi_x_min) &
+                (pts_sensor[:, 0] <= self.roi_x_max) &
+                (pts_sensor[:, 1] >= self.roi_y_min) &
+                (pts_sensor[:, 1] <= self.roi_y_max) &
+                (pts_sensor[:, 2] >= self.roi_z_min) &
+                (pts_sensor[:, 2] <= self.roi_z_max)
             )
 
-            roi_points = pts_finite[mask_roi]
+            roi_points = pts_sensor[mask_roi]
+
+            # Header referenciado a os_sensor (marco frontal del vehiculo)
+            sensor_header = msg.header
+            sensor_header.frame_id = 'os_sensor'
 
             # Construccion del mensaje custom ObstacleInfo
             out_msg = ObstacleInfo()
-            out_msg.header = msg.header
+            out_msg.header = sensor_header
             out_msg.sensor_type = 'lidar'
 
             closest_point = None
@@ -199,11 +211,11 @@ class LidarObstacleDetector(Node):
 
             # 2. Publicar nube de puntos filtrada en el pasillo para RViz2
             if detected and len(roi_points) > 0:
-                cloud_msg = pc2.create_cloud_xyz32(msg.header, roi_points)
+                cloud_msg = pc2.create_cloud_xyz32(sensor_header, roi_points)
                 self.roi_cloud_pub.publish(cloud_msg)
 
             # 3. Publicar marcadores 3D interactivos para RViz2
-            self._publish_visual_markers(msg.header, detected, closest_point, min_dist, severity)
+            self._publish_visual_markers(sensor_header, detected, closest_point, min_dist, severity)
 
         except Exception as e:
             self.get_logger().error(f'Error procesando PointCloud2: {str(e)}', throttle_duration_sec=2.0)

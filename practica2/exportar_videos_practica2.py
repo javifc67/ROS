@@ -4,8 +4,9 @@
 Exportador de Vídeos de Demostración - Práctica 2 ROS 2
 =============================================================================
 Genera 2 vídeos MP4 independientes de alta fidelidad:
-  1. video_lidar_3d.mp4: Vista 3D LookAt orbital idéntica a RViz2 con cuadrícula,
-     nube de puntos Ouster por altura, ROI 3D, detección de obstáculos y HUD.
+  1. video_lidar_3d.mp4: Vista 3D LookAt orbital orientada en el sentido de avance
+     frontal del vehículo (os_sensor) con cuadrícula, nube de puntos Ouster
+     por altura, ROI 3D, detección de obstáculos y HUD de telemetría.
   2. video_camara_yolo.mp4: Stream de la cámara RGB frontal con inferencia
      YOLOv8 en tiempo real, bounding boxes con código de colores según distancia
      y telemetría ADAS en el HUD.
@@ -35,7 +36,7 @@ OUTPUT_DIR = '/home/jabibi/ROS/practica2'
 def export_lidar(limit=None):
     out_path = os.path.join(OUTPUT_DIR, 'video_lidar_3d.mp4')
     print("\n" + "="*60)
-    print(" [1/2] EXPORTANDO VÍDEO LIDAR 3D (RVIZ2 RECONSTRUCTION)")
+    print(" [1/2] EXPORTANDO VÍDEO LIDAR 3D (SENTIDO FRONTAL DE AVANCE)")
     print("="*60)
     
     conn = sqlite3.connect(DB_PATH)
@@ -47,15 +48,17 @@ def export_lidar(limit=None):
         msg_ids = msg_ids[:limit]
     print(f"Total fotogramas LiDAR a procesar: {len(msg_ids)} (de {total_msgs})")
     
-    # Resolucion y parametros 3D LookAt
+    # Resolucion y parametros 3D LookAt en sentido de marcha del vehiculo (os_sensor)
     W, H = 1280, 720
     fps = 20.0
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     writer = cv2.VideoWriter(out_path, fourcc, fps, (W, H))
     
-    eye = np.array([-7.0, 0.0, 4.5])
-    target = np.array([5.0, 0.0, 0.0])
+    # Camara situada detras del vehiculo a 3.5m de altura mirando hacia delante
+    eye = np.array([-6.0, 0.0, 3.5])
+    target = np.array([8.0, 0.0, 0.0])
     up_world = np.array([0.0, 0.0, 1.0])
+    
     fwd = target - eye
     fwd = fwd / np.linalg.norm(fwd)
     right = np.cross(fwd, up_world)
@@ -63,14 +66,14 @@ def export_lidar(limit=None):
     up_cam = np.cross(right, fwd)
     focal = 900.0
 
-    # Parametros ROI y umbrales (mismos que en lidar_obstacle_detector.py)
+    # Parametros ROI y umbrales (marco de avance frontal)
     roi_x_min, roi_x_max = 0.2, 8.0
     roi_y_min, roi_y_max = -1.5, 1.5
-    roi_z_min, roi_z_max = -1.0, 1.5
+    roi_z_min, roi_z_max = -0.8, 1.5
     danger_dist, warning_dist = 1.5, 3.0
 
     # Precomputar cuadricula del suelo (Grid de RViz)
-    grid_img = np.full((H, W, 3), 30, dtype=np.uint8)
+    grid_img = np.full((H, W, 3), 28, dtype=np.uint8)
     def project(points):
         p_rel = points - eye
         x_c = p_rel.dot(right)
@@ -83,19 +86,19 @@ def export_lidar(limit=None):
         v[val] = np.int32(H / 2.0 - focal * (y_c[val] / z_c[val]))
         return u, v, val
 
-    # Lineas del suelo
-    for gx in np.arange(0, 20.1, 2.0):
+    # Lineas del suelo hacia el frente
+    for gx in np.arange(0, 22.1, 2.0):
         sub_pts = np.linspace(np.array([gx, -8.0, -0.7]), np.array([gx, 8.0, -0.7]), 40)
         gu, gv, gval = project(sub_pts)
         in_s = gval & (gu >= 0) & (gu < W) & (gv >= 0) & (gv < H)
-        grid_img[gv[in_s], gu[in_s]] = (52, 52, 56)
+        grid_img[gv[in_s], gu[in_s]] = (48, 48, 52)
     for gy in np.arange(-8.0, 8.1, 2.0):
-        sub_pts = np.linspace(np.array([0.0, gy, -0.7]), np.array([20.0, gy, -0.7]), 40)
+        sub_pts = np.linspace(np.array([0.0, gy, -0.7]), np.array([22.0, gy, -0.7]), 40)
         gu, gv, gval = project(sub_pts)
         in_s = gval & (gu >= 0) & (gu < W) & (gv >= 0) & (gv < H)
-        grid_img[gv[in_s], gu[in_s]] = (52, 52, 56)
+        grid_img[gv[in_s], gu[in_s]] = (48, 48, 52)
 
-    # Esquinas de la caja 3D ROI
+    # Esquinas de la caja 3D ROI frontal
     box_corners = np.array([
         [roi_x_min, roi_y_min, roi_z_min],
         [roi_x_max, roi_y_min, roi_z_min],
@@ -119,18 +122,28 @@ def export_lidar(limit=None):
         raw_data = c.fetchone()[0]
         msg = deserialize_message(raw_data, PointCloud2)
         
-        struct_arr = pc2.read_points(msg, field_names=['x', 'y', 'z'], skip_nans=True)
-        pts = np.column_stack((struct_arr['x'], struct_arr['y'], struct_arr['z']))
+        pts = pc2.read_points_numpy(msg, field_names=['x', 'y', 'z'])
         valid = np.isfinite(pts).all(axis=1)
         pts = pts[valid]
         
-        # Filtrado ROI
+        # Transformacion estatica os_lidar -> os_sensor (sentido de avance frontal del vehiculo)
+        # En el dataset, os_lidar tiene una rotacion yaw de 180 deg respecto a os_sensor.
+        # Al transformar a os_sensor:
+        #  +X es el avance hacia adelante del coche.
+        #  +Y es la izquierda (marquesina y coches estacionados a la izquierda).
+        #  -Y es la derecha (arboles, palmeras y edificio a la derecha).
+        pts_s = np.empty_like(pts)
+        pts_s[:, 0] = -pts[:, 0]
+        pts_s[:, 1] = -pts[:, 1]
+        pts_s[:, 2] = pts[:, 2] - 0.038
+        
+        # Filtrado ROI en el pasillo frontal de avance
         mask_roi = (
-            (pts[:, 0] >= roi_x_min) & (pts[:, 0] <= roi_x_max) &
-            (pts[:, 1] >= roi_y_min) & (pts[:, 1] <= roi_y_max) &
-            (pts[:, 2] >= roi_z_min) & (pts[:, 2] <= roi_z_max)
+            (pts_s[:, 0] >= roi_x_min) & (pts_s[:, 0] <= roi_x_max) &
+            (pts_s[:, 1] >= roi_y_min) & (pts_s[:, 1] <= roi_y_max) &
+            (pts_s[:, 2] >= roi_z_min) & (pts_s[:, 2] <= roi_z_max)
         )
-        roi_pts = pts[mask_roi]
+        roi_pts = pts_s[mask_roi]
         
         severity = 'SAFE'
         closest_pt = None
@@ -148,8 +161,8 @@ def export_lidar(limit=None):
         frame = grid_img.copy()
         
         # 1. Puntos 3D coloreados por altura Z
-        mask_dist = (pts[:, 0] >= -2) & (pts[:, 0] <= 25) & (np.abs(pts[:, 1]) <= 15)
-        pts_view = pts[mask_dist]
+        mask_dist = (pts_s[:, 0] >= -2) & (pts_s[:, 0] <= 25) & (np.abs(pts_s[:, 1]) <= 15)
+        pts_view = pts_s[mask_dist]
         u, v, val = project(pts_view)
         in_screen = val & (u >= 0) & (u < W) & (v >= 0) & (v < H)
         u_s, v_s, z_s = u[in_screen], v[in_screen], pts_view[in_screen, 2]
@@ -238,7 +251,6 @@ def export_camera(limit=None, device=0):
     
     print(f"Cargando modelo YOLOv8 ({YOLO_MODEL_PATH}) en device='{device}'...")
     model = YOLO(YOLO_MODEL_PATH)
-    # Warmup
     dummy = np.zeros((H, W, 3), dtype=np.uint8)
     model(dummy, device=device, verbose=False)
     
@@ -251,12 +263,10 @@ def export_camera(limit=None, device=0):
         raw_data = c.fetchone()[0]
         msg = deserialize_message(raw_data, Image)
         
-        # Decodificacion directa a NumPy y conversion de color
         img_rgb = np.frombuffer(msg.data, dtype=np.uint8).reshape((msg.height, msg.width, 3))
         img_bgr = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
         frame = cv2.resize(img_bgr, (W, H))
         
-        # Inferencia con YOLOv8 en GPU (clases: personas, bicis, coches, motos, buses, camiones)
         results = model(frame, classes=[0, 1, 2, 3, 5, 7], conf=0.35, device=device, verbose=False)
         
         closest_distance = float('inf')
@@ -274,7 +284,6 @@ def export_camera(limit=None, device=0):
                 bh = max(1.0, y2 - y1)
                 area = bw * bh
                 
-                # Formula de estimacion de distancia por perspectiva de la camara
                 est_distance = max(0.5, float(500.0 / math.sqrt(area)))
                 if est_distance < closest_distance:
                     closest_distance = est_distance
@@ -293,7 +302,6 @@ def export_camera(limit=None, device=0):
                 bw_i, bh_i = int(bw), int(bh)
                 cv2.rectangle(frame, (bx, by), (bx + bw_i, by + bh_i), color, 2)
                 
-                # Etiqueta con clase, confianza y distancia estimada
                 label = f"{cls_name} {conf:.2f} | {est_distance:.1f}m"
                 (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)
                 label_y = max(th + 6, by - 6)
@@ -310,7 +318,6 @@ def export_camera(limit=None, device=0):
             global_severity = 'SAFE'
             hud_color = (0, 200, 0)
             
-        # Barra HUD superior (telemetria ADAS)
         cv2.rectangle(frame, (0, 0), (W, 46), (20, 20, 24), -1)
         cv2.line(frame, (0, 46), (W, 46), hud_color, 2)
         
