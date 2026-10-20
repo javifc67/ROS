@@ -7,6 +7,8 @@ Panels:
         - /Global Options1
         - /Status1
         - /LIDAR PointCloud 3D1
+        - /Marcadores LIDAR (Pasillo y Alerta)1
+        - /Obstaculos Detectados LIDAR (Puntos ROI)1
         - /Deteccion Camara Imagen1
       Splitter Ratio: 0.5
     Tree Height: 600
@@ -38,7 +40,7 @@ Visualization Manager:
       Plane Cell Count: 20
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 1
+    - Alpha: 0.7
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
         Max Value: 10
@@ -58,7 +60,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 2
-      Size (m): 0.05
+      Size (m): 0.04
       Style: Points
       Topic:
         Depth: 5
@@ -68,6 +70,51 @@ Visualization Manager:
         Value: /ouster/points
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: Marcadores LIDAR (Pasillo y Alerta)
+      Namespaces:
+        lidar_roi_corridor: true
+        lidar_closest_obstacle: true
+        lidar_obstacle_text: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /obstacles/lidar/markers
+      Value: true
+    - Alpha: 1.0
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -2
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 30; 30
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: Obstaculos Detectados LIDAR (Puntos ROI)
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 5
+      Size (m): 0.09
+      Style: Points
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /obstacles/lidar/roi_points
+      Use Fixed Frame: true
+      Use rainbow: false
       Value: true
     - Class: rviz_default_plugins/Image
       Enabled: true
