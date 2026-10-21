@@ -4,7 +4,8 @@
   <name>turtle_control</name>
   <version>1.0.0</version>
   <description>Paquete de control avanzado para Turtlesim con soporte de movimiento continuo y servicios</description>
-  <maintainer email="robotica@etsisi.upm.es">Alumno Robotica</maintainer>
+  <maintainer email="javifc67@gmail.com">Javier Ferreño Cachafeiro</maintainer>
+  <author email="javifc67@gmail.com">Javier Ferreño Cachafeiro</author>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
