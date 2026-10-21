@@ -15,7 +15,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Javier Ferreño Cachafeiro',
+    maintainer='Javier Ferreño Corzo',
     maintainer_email='javifc67@gmail.com',
     description='Control avanzado para Turtlesim con movimiento fluido y servicios',
     license='Apache-2.0',
