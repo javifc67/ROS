@@ -6,236 +6,221 @@
 <style>
   @page {
     size: A4 portrait;
-    margin: 1.1cm 1.3cm 1.1cm 1.3cm;
+    margin: 1.2cm 1.5cm 1.2cm 1.5cm;
+    @bottom-center {
+      content: "Página " counter(page) " de " counter(pages);
+      font-family: Calibri, Arial, sans-serif;
+      font-size: 8pt;
+      color: #595959;
+    }
   }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #1e293b;
-    line-height: 1.32;
-    font-size: 8.2pt;
+    font-family: Calibri, "Segoe UI", Arial, "Liberation Sans", sans-serif;
+    color: #262626;
+    line-height: 1.3;
+    font-size: 8.5pt;
     margin: 0;
     padding: 0;
   }
-  .header-card {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 5px;
-    margin-bottom: 8px;
-  }
-  .header-card h1 {
-    font-size: 13pt;
+
+  .doc-title {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #1f4e78;
     margin: 0 0 2px 0;
-    font-weight: 700;
-    color: #ffffff;
   }
-  .header-card .subtitle {
-    font-size: 9pt;
-    color: #bfdbfe;
-    margin: 0 0 6px 0;
-    font-weight: 500;
-  }
-  .meta-grid {
-    display: table;
-    width: 100%;
-    font-size: 7.8pt;
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    padding-top: 5px;
-  }
-  .meta-row {
-    display: table-row;
-  }
-  .meta-cell {
-    display: table-cell;
-    padding: 1px 3px;
-  }
-  .meta-cell.label {
-    font-weight: 600;
-    color: #93c5fd;
-    width: 11%;
-  }
-  .meta-cell.value {
-    color: #ffffff;
-    width: 39%;
-  }
-  h2 {
-    color: #1e40af;
+
+  .doc-subtitle {
     font-size: 10pt;
-    border-bottom: 1.2px solid #dbeafe;
-    padding-bottom: 2px;
-    margin-top: 7px;
-    margin-bottom: 5px;
-    font-weight: 700;
+    color: #595959;
+    margin: 0 0 10px 0;
   }
-  h3 {
-    color: #0f172a;
+
+  .meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
     font-size: 8.5pt;
+  }
+  .meta-table td {
+    padding: 2.5px 5px;
+    border: 1px solid #d9d9d9;
+  }
+  .meta-table td.label {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333333;
+    width: 15%;
+  }
+  .meta-table td.value {
+    color: #262626;
+    width: 35%;
+  }
+
+  h2 {
+    color: #2e75b6;
+    font-size: 11pt;
+    font-weight: bold;
+    border-bottom: 1px solid #2e75b6;
+    padding-bottom: 1.5px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  h3 {
+    color: #1f4e78;
+    font-size: 9.2pt;
+    font-weight: bold;
     margin-top: 5px;
     margin-bottom: 2px;
-    font-weight: 600;
   }
+
   p {
     margin: 0 0 4px 0;
     text-align: justify;
   }
+
   ul {
-    margin: 2px 0 5px 15px;
+    margin: 2px 0 5px 16px;
     padding: 0;
   }
+
   li {
-    margin-bottom: 1.5px;
+    margin-bottom: 2px;
   }
+
   code {
-    font-family: Consolas, "Liberation Mono", Courier, monospace;
-    background-color: #f1f5f9;
-    color: #0f172a;
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #f2f2f2;
+    color: #1a1a1a;
     padding: 1px 3px;
-    border-radius: 3px;
-    font-size: 7.8pt;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    font-size: 8pt;
   }
+
   pre {
-    background-color: #0f172a;
-    color: #f8fafc;
+    background-color: #f8f9fa;
+    color: #1a1a1a;
+    border: 1px solid #d0d5dd;
+    border-left: 3px solid #2e75b6;
     padding: 4px 7px;
-    border-radius: 4px;
-    font-family: Consolas, "Liberation Mono", Courier, monospace;
-    font-size: 7.2pt;
+    border-radius: 2px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 7.5pt;
     line-height: 1.25;
     margin: 3px 0 5px 0;
   }
-  table.data-table {
+
+  table.word-table {
     width: 100%;
     border-collapse: collapse;
     margin: 5px 0 6px 0;
-    font-size: 7.6pt;
+    font-size: 8pt;
   }
-  table.data-table th, table.data-table td {
-    border: 1px solid #cbd5e1;
+
+  table.word-table th, table.word-table td {
+    border: 1px solid #bfbfbf;
     padding: 3px 5px;
     text-align: left;
   }
-  table.data-table th {
-    background-color: #f1f5f9;
-    color: #1e293b;
-    font-weight: 600;
+
+  table.word-table th {
+    background-color: #deeaf6;
+    color: #1f4e78;
+    font-weight: bold;
   }
-  .badge-ok {
-    display: inline-block;
-    background-color: #dcfce7;
-    color: #15803d;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 6.8pt;
+
+  table.word-table tr:nth-child(even) td {
+    background-color: #f9fbfd;
   }
-  .feature-box {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-left: 3px solid #2563eb;
-    padding: 4px 7px;
-    margin: 4px 0;
-    border-radius: 0 4px 4px 0;
+
+  .status-ok {
+    font-weight: bold;
+    color: #2e75b6;
   }
+
   .page-break {
     page-break-before: always;
     break-before: page;
-  }
-  .footer {
-    margin-top: 8px;
-    padding-top: 3px;
-    border-top: 1px solid #e2e8f0;
-    font-size: 6.8pt;
-    color: #64748b;
-    text-align: center;
   }
 </style>
 </head>
 <body>
 
-<!-- PÁGINA 1: PORTADA, OBJETIVOS Y FUNCIONES IMPLEMENTADAS (MOVIMIENTO, SERVICIOS, PARÁMETROS) -->
-<div class="header-card">
-  <h1>Memoria Técnica: Control Avanzado de Turtlesim</h1>
-  <div class="subtitle">Práctica 1 — Asignatura de Robótica (ROS 2 Jazzy Jalisco)</div>
-  <div class="meta-grid">
-    <div class="meta-row">
-      <div class="meta-cell label">Alumno:</div>
-      <div class="meta-cell value"><strong>Javier Ferreño Corzo</strong></div>
-      <div class="meta-cell label">Titulación:</div>
-      <div class="meta-cell value">Grado en Ingeniería de Computadores</div>
-    </div>
-    <div class="meta-row">
-      <div class="meta-cell label">Centro:</div>
-      <div class="meta-cell value">E.T.S.I. de Sistemas Informáticos (UPM)</div>
-      <div class="meta-cell label">Paquete:</div>
-      <div class="meta-cell value"><code>turtle_control</code> (Nodo: <code>teleop_turtle</code>)</div>
-    </div>
-  </div>
-</div>
+<div class="doc-title">Memoria Técnica: Control Avanzado de Turtlesim</div>
+<div class="doc-subtitle">Práctica 1 — Asignatura de Robótica (ROS 2 Jazzy Jalisco)</div>
+
+<table class="meta-table">
+  <tr>
+    <td class="label">Alumno:</td>
+    <td class="value"><strong>Javier Ferreño Corzo</strong></td>
+    <td class="label">Titulación:</td>
+    <td class="value">Grado en Ingeniería de Computadores</td>
+  </tr>
+  <tr>
+    <td class="label">Centro:</td>
+    <td class="value">E.T.S.I. de Sistemas Informáticos (UPM)</td>
+    <td class="label">Paquete:</td>
+    <td class="value"><code>turtle_control</code> (Nodo: <code>teleop_turtle</code>)</td>
+  </tr>
+</table>
 
 <h2>1. Introducción y Objetivos</h2>
 <p>
-El objetivo de esta práctica es desarrollar un paquete en <strong>ROS 2</strong> que extienda el simulador <code>turtlesim</code>. Frente al nodo por defecto <code>turtle_teleop_key</code> (que bloquea la consola y sólo admite pasos ortogonales discretos), esta solución proporciona una cinemática diferencial continua capaz de <strong>avanzar y rotar de forma simultánea</strong> (trazado fluido de curvas y círculos), interactuar con los <strong>servicios</strong> nativos del simulador mediante teclado y posibilitar la <strong>reconfiguración en caliente de parámetros</strong> en tiempo de ejecución.
+El objetivo de la presente práctica consiste en diseñar e implementar un paquete en <strong>ROS 2</strong> que extienda y mejore las funciones de teleoperación del simulador <code>turtlesim</code>. Frente al nodo estándar <code>turtle_teleop_key</code> (que lee la consola de modo bloqueante y sólo permite movimientos ortogonales aislados), esta solución desarrolla un control cinemático diferencial continuo que permite <strong>avanzar y girar de manera simultánea</strong> (generando arcos y curvas fluidas), interaccionar con los <strong>servicios</strong> nativos del entorno mediante teclas directas y posibilitar la <strong>modificación de parámetros en caliente</strong> durante la simulación.
 </p>
 
 <h2>2. Funciones Implementadas para el Control del Robot</h2>
 <p>
-La solución se encapsula en el nodo <code>TeleopTurtle</code> (desarrollado en <code>turtle_control/teleop_turtle.py</code>) estructurado en los siguientes componentes:
+Toda la lógica de control se encapsula en el nodo <code>TeleopTurtle</code> (dentro de <code>turtle_control/teleop_turtle.py</code>), desarrollado en Python utilizando la librería oficial <code>rclpy</code>. La solución comprende las siguientes funciones técnicas:
 </p>
 
-<div class="feature-box">
-  <h3>2.1. Captura No Bloqueante y Movimiento Simultáneo (W, S, A, D)</h3>
-  <p>
-  Se integra <code>pynput.keyboard.Listener</code> en un hilo desacoplado (<em>daemon thread</em>), evitando bloquear el bucle de eventos principal de ROS 2.
-  </p>
-  <ul>
-    <li><strong>Conjunto de teclas concurrentes:</strong> El nodo almacena las pulsaciones activas en <code>self.pressed_keys = set()</code>. En <code>on_key_press</code> se añade la tecla (<code>w</code>, <code>s</code>, <code>a</code>, <code>d</code>) y en <code>on_key_release</code> se retira de inmediato.</li>
-    <li><strong>Cálculo cinemático diferencial a 30 Hz (<code>timer_callback</code>):</strong> Un temporizador periódico publica continuamente en <code>/turtle1/cmd_vel</code> el mensaje <code>geometry_msgs/msg/Twist</code> sumando los componentes activos:
-      <pre><code>linear = (self.speed if 'w' in self.pressed_keys else 0.0) - (self.speed if 's' in self.pressed_keys else 0.0)
+<h3>2.1. Captura No Bloqueante y Movimiento Simultáneo (Teclas W, S, A, D)</h3>
+<p>
+Para superar la limitación del buffer bloqueante de consola, se integra la librería <code>pynput.keyboard.Listener</code> en un hilo secundario independiente (<em>daemon thread</em>), evitando interrumpir el hilo principal de ROS:
+</p>
+<ul>
+  <li><strong>Conjunto de teclas concurrentes:</strong> El nodo gestiona las teclas activas en <code>self.pressed_keys = set()</code>. En <code>on_key_press</code> se añade la tecla pulsada (<code>w</code>, <code>s</code>, <code>a</code>, <code>d</code>), y en <code>on_key_release</code> se descarta al soltarla.</li>
+  <li><strong>Cálculo cinemático diferencial a 30 Hz (<code>timer_callback</code>):</strong> Un temporizador periódico publica a 30 Hz en <code>/turtle1/cmd_vel</code> el mensaje <code>geometry_msgs/msg/Twist</code> sumando los componentes algebraicos:
+    <pre><code>linear = (self.speed if 'w' in self.pressed_keys else 0.0) - (self.speed if 's' in self.pressed_keys else 0.0)
 angular = (self.angular_speed if 'a' in self.pressed_keys else 0.0) - (self.angular_speed if 'd' in self.pressed_keys else 0.0)
 twist.linear.x, twist.angular.z = float(linear), float(angular)
 self.cmd_vel_pub.publish(twist)</code></pre>
-      Al presionar conjuntamente <code>W</code> y <code>A</code> (o <code>W</code> y <code>D</code>), el simulador recibe tanto aceleración lineal como giro angular simultáneos, generando curvas naturales continuas.
-    </li>
-  </ul>
-</div>
+    Al presionar a la vez <code>W</code> y <code>A</code> (o <code>W</code> y <code>D</code>), el simulador recibe tanto velocidad lineal en X como velocidad angular en Z, describiendo curvas continuas y trayectorias suaves.
+  </li>
+</ul>
 
-<div class="feature-box">
-  <h3>2.2. Invocación Asíncrona de Servicios de Turtlesim</h3>
-  <p>
-  Las peticiones se realizan de forma no bloqueante con <code>call_async()</code> para no pausar el temporizador de velocidad:
-  </p>
-  <ul>
-    <li><strong>Control de Pluma (ESPACIO &rarr; <code>/turtle1/set_pen</code>):</strong> La función <code>toggle_pen()</code> conmuta <code>self.pen_enabled</code> y envía <code>SetPen.Request</code> fijando <code>req.off = 0</code> (activar trazo) o <code>req.off = 1</code> (desactivar trazo).</li>
-    <li><strong>Limpieza de Pantalla (C &rarr; <code>/clear</code>):</strong> La función <code>call_clear()</code> envía una solicitud de tipo <code>std_srvs/srv/Empty</code>, borrando las líneas dibujadas sobre el lienzo sin alterar las coordenadas del robot.</li>
-    <li><strong>Reinicio Central Cenital (R &rarr; <code>/turtle1/teleport_absolute</code>):</strong> El comando nativo <code>/reset</code> orienta la tortuga a 0 rad (derecha). Para cumplir la especificación (<em>"al centro y mirando hacia arriba"</em>), la función <code>call_reset_center_up()</code> utiliza <code>TeleportAbsolute.Request</code> con <code>x=5.5444</code>, <code>y=5.5444</code> y <code>theta = π / 2</code> (90° exactos).</li>
-  </ul>
-</div>
+<h3>2.2. Invocación Asíncrona de Servicios de Turtlesim</h3>
+<p>
+Para no pausar la publicación periódica de velocidad, todas las peticiones a servicios se envían de forma asíncrona mediante el método <code>call_async()</code>:
+</p>
+<ul>
+  <li><strong>Control de Pluma (ESPACIO &rarr; <code>/turtle1/set_pen</code>):</strong> La función <code>toggle_pen()</code> conmuta la variable booleana <code>self.pen_enabled</code> y envía una petición <code>SetPen.Request</code> fijando <code>req.off = 0</code> (activar pintado) o <code>req.off = 1</code> (desactivar pintado), permitiendo circular sin trazar línea cuando se desee.</li>
+  <li><strong>Limpieza de Pantalla (C &rarr; <code>/clear</code>):</strong> La función <code>call_clear()</code> envía una solicitud de tipo <code>std_srvs/srv/Empty</code>, borrando las trayectorias dibujadas sobre el lienzo sin alterar las coordenadas actuales del robot.</li>
+  <li><strong>Reinicio Central Cenital (R &rarr; <code>/turtle1/teleport_absolute</code>):</strong> El servicio estándar <code>/reset</code> de Turtlesim restablece la tortuga orientada hacia la derecha (0 rad). Para acatar estrictamente la especificación (<em>"al centro de la pantalla y mirando hacia arriba"</em>), la función <code>call_reset_center_up()</code> utiliza <code>TeleportAbsolute.Request</code> fijando <code>x=5.5444</code>, <code>y=5.5444</code> y <code>theta = π / 2</code> radianes (90° exactos).</li>
+</ul>
 
-<div class="feature-box">
-  <h3>2.3. Parámetros Dinámicos en Tiempo de Ejecución</h3>
-  <p>
-  El nodo declara formalmente: <code>speed</code> (def. 2.0), <code>angular_speed</code> (def. 2.0) y <code>log_level</code> (def. 'INFO'). Mediante <code>self.add_on_set_parameters_callback(self.on_parameter_change)</code>, el nodo captura en caliente cualquier modificación realizada con <code>ros2 param set</code>, actualizando la velocidad o el nivel del logger (<code>self.get_logger().set_level(...)</code>) al instante.
-  </p>
-</div>
+<h3>2.3. Parámetros Dinámicos en Tiempo de Ejecución</h3>
+<p>
+El nodo declara formalmente: <code>speed</code> (def. 2.0), <code>angular_speed</code> (def. 2.0) y <code>log_level</code> (def. 'INFO'). Mediante <code>self.add_on_set_parameters_callback(self.on_parameter_change)</code>, se capturan en tiempo real los cambios enviados por consola con <code>ros2 param set</code>, actualizando al vuelo las velocidades cinemáticas o la severidad del log sin reiniciar el nodo.
+</p>
 
-<!-- SALTO DE PÁGINA OBLIGATORIO: EXACTAMENTE A PÁGINA 2 -->
+<!-- SALTO DE PÁGINA: EXACTAMENTE A PÁGINA 2 -->
 <div class="page-break"></div>
 
-<!-- PÁGINA 2: LAUNCH, INTERFACES, COMPILACIÓN, EJECUCIÓN Y TABLA REQUISITOS -->
-<div class="feature-box">
-  <h3>2.4. Automatización con Lanzador (Launch File)</h3>
-  <p>
-  El archivo <code>launch/turtlesim_teleop.launch.py</code> declara los argumentos configurables (<code>DeclareLaunchArgument</code>) e inicializa conjuntamente <code>turtlesim_node</code> y <code>teleop_turtle</code> con <code>emulate_tty=True</code> para habilitar la interacción directa desde consola.
-  </p>
-</div>
+<h3>2.4. Automatización con Lanzador (Launch File)</h3>
+<p>
+El archivo <code>launch/turtlesim_teleop.launch.py</code> declara los argumentos de configuración (<code>DeclareLaunchArgument</code>) e inicializa coordinadamente tanto <code>turtlesim_node</code> como <code>teleop_turtle</code>, configurando <code>emulate_tty=True</code> para mantener la captura directa por consola.
+</p>
 
 <h2>3. Interfaces y Comunicaciones en el Grafo ROS 2</h2>
-<table class="data-table">
+<table class="word-table">
   <thead>
     <tr>
       <th>Canal / Mecanismo</th>
-      <th>Nombre</th>
+      <th>Nombre del Recurso</th>
       <th>Tipo de Interfaz</th>
       <th>Función y Propósito</th>
     </tr>
@@ -245,7 +230,7 @@ self.cmd_vel_pub.publish(twist)</code></pre>
       <td><strong>Topic (Publisher)</strong></td>
       <td><code>/turtle1/cmd_vel</code></td>
       <td><code>geometry_msgs/msg/Twist</code></td>
-      <td>Emisión continua (30 Hz) de velocidades lineal X y angular Z.</td>
+      <td>Publicación continua (30 Hz) de velocidad lineal X y angular Z.</td>
     </tr>
     <tr>
       <td><strong>Service Client</strong></td>
@@ -282,8 +267,8 @@ self.cmd_vel_pub.publish(twist)</code></pre>
 
 <h2>4. Guía de Compilación y Comandos de Ejecución</h2>
 
-<p><strong>1. Compilación del espacio de trabajo (compilación limpia y verificada):</strong></p>
-<pre><code>cd ~/ROS/practica\ 1    # o dentro del directorio del workspace ws
+<p><strong>1. Compilación del espacio de trabajo (compilación limpia):</strong></p>
+<pre><code>cd ~/ROS/practica\ 1    # o dentro del espacio de trabajo ws
 colcon build --packages-select turtle_control
 source install/setup.bash</code></pre>
 
@@ -291,15 +276,15 @@ source install/setup.bash</code></pre>
 <pre><code># Lanzamiento unificado con parámetros por defecto:
 ros2 launch turtle_control turtlesim_teleop.launch.py
 
-# Lanzamiento alternativo modificando velocidad inicial o severidad de log:
+# Lanzamiento alternativo modificando parámetros iniciales:
 ros2 launch turtle_control turtlesim_teleop.launch.py speed:=3.5 log_level:=DEBUG</code></pre>
 
 <p><strong>3. Modificación interactiva de parámetros en caliente:</strong></p>
 <pre><code>ros2 param set /teleop_turtle speed 5.0        # Incrementa la velocidad lineal en caliente
-ros2 param set /teleop_turtle log_level DEBUG   # Modifica la verbosidad de salida del nodo</code></pre>
+ros2 param set /teleop_turtle log_level DEBUG   # Modifica la severidad de log del nodo</code></pre>
 
 <h2>5. Matriz de Cumplimiento de Requisitos del Enunciado</h2>
-<table class="data-table">
+<table class="word-table">
   <thead>
     <tr>
       <th>Requisito del Enunciado</th>
@@ -310,50 +295,46 @@ ros2 param set /teleop_turtle log_level DEBUG   # Modifica la verbosidad de sali
   <tbody>
     <tr>
       <td>Movimiento continuo con W, S, A, D</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Mapeo de teclas sobre vector `geometry_msgs/Twist`.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Mapeo de teclas sobre vector <code>geometry_msgs/Twist</code>.</td>
     </tr>
     <tr>
       <td>Giro y avance simultáneo (curvas continuas)</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Set concurrente con `pynput` y publicación periódica combinada a 30 Hz.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Conjunto concurrente con <code>pynput</code> y publicación periódica a 30 Hz.</td>
     </tr>
     <tr>
       <td>Tecla SPACE (habilitar/deshabilitar trazo)</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Cliente asíncrono para `/turtle1/set_pen` con flag conmutable `off: 0/1`.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Cliente asíncrono para <code>/turtle1/set_pen</code> con flag conmutable <code>off</code>.</td>
     </tr>
     <tr>
       <td>Tecla C (borrado de dibujo)</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Cliente asíncrono para servicio nativo `/clear`.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Cliente asíncrono para servicio nativo <code>/clear</code>.</td>
     </tr>
     <tr>
       <td>Tecla R (centro y mirando hacia arriba)</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Teletransporte a `x=5.544, y=5.544, θ=π/2` con `/turtle1/teleport_absolute`.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Teletransporte a <code>x=5.544, y=5.544, θ=π/2</code> con <code>/turtle1/teleport_absolute</code>.</td>
     </tr>
     <tr>
       <td>Lanzador dedicado (Launch File)</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>`turtlesim_teleop.launch.py` lanza conjuntamente simulador y control.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td><code>turtlesim_teleop.launch.py</code> lanza conjuntamente simulador y control.</td>
     </tr>
     <tr>
       <td>Parámetro de nivel de logging</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Parámetro reactivo `log_level` con callback dinámico de severidad.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Parámetro reactivo <code>log_level</code> con callback dinámico de severidad.</td>
     </tr>
     <tr>
       <td>Parámetro de velocidad en tiempo real</td>
-      <td><span class="badge-ok">CUMPLIDO</span></td>
-      <td>Parámetro `speed` reactivo mediante callback ante `ros2 param set`.</td>
+      <td><span class="status-ok">Cumplido</span></td>
+      <td>Parámetro <code>speed</code> reactivo mediante callback ante <code>ros2 param set</code>.</td>
     </tr>
   </tbody>
 </table>
-
-<div class="footer">
-  Memoria Técnica Breve — Práctica 1 Robótica — E.T.S.I. de Sistemas Informáticos (UPM)
-</div>
 
 </body>
 </html>
