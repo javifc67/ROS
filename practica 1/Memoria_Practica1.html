@@ -122,9 +122,9 @@
 </head>
 <body>
 
-<h2>1. Introducción y Descripción del Sistema</h2>
+<h2>1. Introducción</h2>
 <p>
-El presente documento describe el diseño y desarrollo del paquete de software <code>turtle_control</code> para el entorno de simulación robótica <code>turtlesim</code> en <strong>ROS 2 (Jazzy Jalisco)</strong>, implementado por <strong>Javier Ferreño Corzo</strong>. El sistema tiene como finalidad extender y potenciar las capacidades del controlador de teleoperación estándar, implementando una cinemática diferencial continua que permite <strong>avanzar y rotar de forma simultánea</strong> (generando trayectorias circulares y curvas fluidas en lugar de pasos discretos ortogonales), integrando la interacción directa con los <strong>servicios</strong> nativos del robot mediante atajos de teclado (activación y desactivación del trazo de pintura, borrado del lienzo y retorno al centro en orientación cenital) y proporcionando un mecanismo de <strong>reconfiguración dinámica de parámetros en tiempo real</strong> sin detener la ejecución de los nodos.
+Soy <strong>Javier Ferreño Corzo</strong> y en este proyecto he desarrollado el paquete <code>turtle_control</code> para mejorar el control y manejo del simulador <code>turtlesim</code> en <strong>ROS 2 (Jazzy)</strong>. La idea principal es dejar atrás el teleoperador básico que viene por defecto (que bloquea la terminal y solo permite avanzar o girar de forma rígida y por separado), sustituyéndolo por un control mucho más natural donde la tortuga puede <strong>avanzar y girar a la vez</strong> con W, S, A y D para trazar curvas y círculos fluidos. Además, he conectado el nodo directamente a los <strong>servicios</strong> de Turtlesim para poder activar o pausar el dibujo con la barra espaciadora, borrar la pantalla con la tecla C y recolocar la tortuga en el centro mirando hacia arriba con la tecla R, permitiendo también cambiar la velocidad o los logs en caliente mientras el nodo está funcionando.
 </p>
 
 <h2>2. Funciones Implementadas para el Control del Robot</h2>
