@@ -15,8 +15,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Javier Ferreño Corzo',
-    maintainer_email='javifc67@gmail.com',
+    maintainer='Alumno',
+    maintainer_email='robotica@etsisi.upm.es',
     description='Control avanzado para Turtlesim con movimiento fluido y servicios',
     license='Apache-2.0',
     entry_points={
