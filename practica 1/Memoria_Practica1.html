@@ -243,49 +243,40 @@ ros2 param set /teleop_turtle log_level DEBUG   # Modifica la severidad de log d
   <thead>
     <tr>
       <th>Requisito / Especificación Técnica</th>
-      <th>Estado</th>
       <th>Mecanismo Técnico Implementado</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>Movimiento continuo con W, S, A, D</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Mapeo de teclas sobre vector <code>geometry_msgs/Twist</code>.</td>
     </tr>
     <tr>
       <td>Giro y avance simultáneo (curvas continuas)</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Conjunto concurrente con <code>pynput</code> y publicación periódica a 30 Hz.</td>
     </tr>
     <tr>
       <td>Tecla SPACE (habilitar/deshabilitar trazo)</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Cliente asíncrono para <code>/turtle1/set_pen</code> con flag conmutable <code>off</code>.</td>
     </tr>
     <tr>
       <td>Tecla C (borrado de dibujo)</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Cliente asíncrono para servicio nativo <code>/clear</code>.</td>
     </tr>
     <tr>
       <td>Tecla R (centro y mirando hacia arriba)</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Teletransporte a <code>x=5.544, y=5.544, θ=π/2</code> con <code>/turtle1/teleport_absolute</code>.</td>
     </tr>
     <tr>
       <td>Lanzador dedicado (Launch File)</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td><code>turtlesim_teleop.launch.py</code> lanza conjuntamente simulador y control.</td>
     </tr>
     <tr>
       <td>Parámetro de nivel de logging</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Parámetro reactivo <code>log_level</code> con callback dinámico de severidad.</td>
     </tr>
     <tr>
       <td>Parámetro de velocidad en tiempo real</td>
-      <td><span class="status-ok">Cumplido</span></td>
       <td>Parámetro <code>speed</code> reactivo mediante callback ante <code>ros2 param set</code>.</td>
     </tr>
   </tbody>
