@@ -2,15 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Memoria Práctica 1 - Control de Turtlesim en ROS 2</title>
+<title>Memoria Técnica - Control Avanzado de Turtlesim en ROS 2</title>
 <style>
   @page {
     size: A4 portrait;
-    margin: 1.2cm 1.5cm 1.2cm 1.5cm;
+    margin: 1.5cm 1.6cm 1.5cm 1.6cm;
     @bottom-center {
       content: "Página " counter(page) " de " counter(pages);
       font-family: Calibri, Arial, sans-serif;
-      font-size: 8pt;
+      font-size: 8.5pt;
       color: #595959;
     }
   }
@@ -18,66 +18,37 @@
   body {
     font-family: Calibri, "Segoe UI", Arial, "Liberation Sans", sans-serif;
     color: #262626;
-    line-height: 1.3;
-    font-size: 8.5pt;
+    line-height: 1.35;
+    font-size: 8.8pt;
     margin: 0;
     padding: 0;
   }
 
-  .doc-title {
-    font-size: 16pt;
-    font-weight: bold;
-    color: #1f4e78;
-    margin: 0 0 2px 0;
-  }
-
-  .doc-subtitle {
-    font-size: 10pt;
-    color: #595959;
-    margin: 0 0 10px 0;
-  }
-
-  .meta-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-    font-size: 8.5pt;
-  }
-  .meta-table td {
-    padding: 2.5px 5px;
-    border: 1px solid #d9d9d9;
-  }
-  .meta-table td.label {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    color: #333333;
-    width: 15%;
-  }
-  .meta-table td.value {
-    color: #262626;
-    width: 35%;
-  }
-
+  /* ENCABEZADOS ESTILO WORD (Azul Corporativo Office #2e75b6 y #1f4e78) */
   h2 {
     color: #2e75b6;
-    font-size: 11pt;
+    font-size: 11.5pt;
     font-weight: bold;
     border-bottom: 1px solid #2e75b6;
-    padding-bottom: 1.5px;
-    margin-top: 8px;
-    margin-bottom: 4px;
+    padding-bottom: 2px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+
+  h2:first-of-type {
+    margin-top: 0;
   }
 
   h3 {
     color: #1f4e78;
-    font-size: 9.2pt;
+    font-size: 9.5pt;
     font-weight: bold;
-    margin-top: 5px;
+    margin-top: 6px;
     margin-bottom: 2px;
   }
 
   p {
-    margin: 0 0 4px 0;
+    margin: 0 0 5px 0;
     text-align: justify;
   }
 
@@ -90,6 +61,7 @@
     margin-bottom: 2px;
   }
 
+  /* CÓDIGO TIPO WORD: FONDO CLARO Y FUENTE CONSOLAS */
   code {
     font-family: Consolas, "Courier New", monospace;
     background-color: #f2f2f2;
@@ -97,7 +69,7 @@
     padding: 1px 3px;
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    font-size: 8pt;
+    font-size: 8.2pt;
   }
 
   pre {
@@ -108,21 +80,22 @@
     padding: 4px 7px;
     border-radius: 2px;
     font-family: Consolas, "Courier New", monospace;
-    font-size: 7.5pt;
+    font-size: 7.8pt;
     line-height: 1.25;
     margin: 3px 0 5px 0;
   }
 
+  /* TABLAS ESTILO WORD (Cuadrícula limpia con cabecera sombreada) */
   table.word-table {
     width: 100%;
     border-collapse: collapse;
     margin: 5px 0 6px 0;
-    font-size: 8pt;
+    font-size: 8.2pt;
   }
 
   table.word-table th, table.word-table td {
     border: 1px solid #bfbfbf;
-    padding: 3px 5px;
+    padding: 3.5px 5px;
     text-align: left;
   }
 
@@ -149,40 +122,22 @@
 </head>
 <body>
 
-<div class="doc-title">Memoria Técnica: Control Avanzado de Turtlesim</div>
-<div class="doc-subtitle">Práctica 1 — Asignatura de Robótica (ROS 2 Jazzy Jalisco)</div>
-
-<table class="meta-table">
-  <tr>
-    <td class="label">Alumno:</td>
-    <td class="value"><strong>Javier Ferreño Corzo</strong></td>
-    <td class="label">Titulación:</td>
-    <td class="value">Grado en Ingeniería de Computadores</td>
-  </tr>
-  <tr>
-    <td class="label">Centro:</td>
-    <td class="value">E.T.S.I. de Sistemas Informáticos (UPM)</td>
-    <td class="label">Paquete:</td>
-    <td class="value"><code>turtle_control</code> (Nodo: <code>teleop_turtle</code>)</td>
-  </tr>
-</table>
-
-<h2>1. Introducción y Objetivos</h2>
+<h2>1. Introducción y Descripción del Sistema</h2>
 <p>
-El objetivo de la presente práctica consiste en diseñar e implementar un paquete en <strong>ROS 2</strong> que extienda y mejore las funciones de teleoperación del simulador <code>turtlesim</code>. Frente al nodo estándar <code>turtle_teleop_key</code> (que lee la consola de modo bloqueante y sólo permite movimientos ortogonales aislados), esta solución desarrolla un control cinemático diferencial continuo que permite <strong>avanzar y girar de manera simultánea</strong> (generando arcos y curvas fluidas), interaccionar con los <strong>servicios</strong> nativos del entorno mediante teclas directas y posibilitar la <strong>modificación de parámetros en caliente</strong> durante la simulación.
+El presente documento describe el diseño y desarrollo del paquete de software <code>turtle_control</code> para el entorno de simulación robótica <code>turtlesim</code> en <strong>ROS 2 (Jazzy Jalisco)</strong>, implementado por <strong>Javier Ferreño Corzo</strong>. El sistema tiene como finalidad extender y potenciar las capacidades del controlador de teleoperación estándar, implementando una cinemática diferencial continua que permite <strong>avanzar y rotar de forma simultánea</strong> (generando trayectorias circulares y curvas fluidas en lugar de pasos discretos ortogonales), integrando la interacción directa con los <strong>servicios</strong> nativos del robot mediante atajos de teclado (activación y desactivación del trazo de pintura, borrado del lienzo y retorno al centro en orientación cenital) y proporcionando un mecanismo de <strong>reconfiguración dinámica de parámetros en tiempo real</strong> sin detener la ejecución de los nodos.
 </p>
 
 <h2>2. Funciones Implementadas para el Control del Robot</h2>
 <p>
-Toda la lógica de control se encapsula en el nodo <code>TeleopTurtle</code> (dentro de <code>turtle_control/teleop_turtle.py</code>), desarrollado en Python utilizando la librería oficial <code>rclpy</code>. La solución comprende las siguientes funciones técnicas:
+La solución se encapsula en el nodo <code>TeleopTurtle</code> (dentro de <code>turtle_control/teleop_turtle.py</code>), desarrollado en Python utilizando la librería oficial <code>rclpy</code>. Se articulan las siguientes funciones y componentes técnicos:
 </p>
 
 <h3>2.1. Captura No Bloqueante y Movimiento Simultáneo (Teclas W, S, A, D)</h3>
 <p>
-Para superar la limitación del buffer bloqueante de consola, se integra la librería <code>pynput.keyboard.Listener</code> en un hilo secundario independiente (<em>daemon thread</em>), evitando interrumpir el hilo principal de ROS:
+Para superar la limitación del buffer bloqueante de consola habitual en los nodos de teleoperación, se integra la librería <code>pynput.keyboard.Listener</code> en un hilo secundario desacoplado (<em>daemon thread</em>), evitando pausar el ciclo de eventos principal de ROS:
 </p>
 <ul>
-  <li><strong>Conjunto de teclas concurrentes:</strong> El nodo gestiona las teclas activas en <code>self.pressed_keys = set()</code>. En <code>on_key_press</code> se añade la tecla pulsada (<code>w</code>, <code>s</code>, <code>a</code>, <code>d</code>), y en <code>on_key_release</code> se descarta al soltarla.</li>
+  <li><strong>Conjunto de teclas concurrentes:</strong> El nodo gestiona las teclas activas en la estructura <code>self.pressed_keys = set()</code>. En el callback <code>on_key_press</code> se añade la tecla pulsada (<code>w</code>, <code>s</code>, <code>a</code>, <code>d</code>), y en <code>on_key_release</code> se descarta de forma inmediata.</li>
   <li><strong>Cálculo cinemático diferencial a 30 Hz (<code>timer_callback</code>):</strong> Un temporizador periódico publica a 30 Hz en <code>/turtle1/cmd_vel</code> el mensaje <code>geometry_msgs/msg/Twist</code> sumando los componentes algebraicos:
     <pre><code>linear = (self.speed if 'w' in self.pressed_keys else 0.0) - (self.speed if 's' in self.pressed_keys else 0.0)
 angular = (self.angular_speed if 'a' in self.pressed_keys else 0.0) - (self.angular_speed if 'd' in self.pressed_keys else 0.0)
@@ -199,7 +154,7 @@ Para no pausar la publicación periódica de velocidad, todas las peticiones a s
 <ul>
   <li><strong>Control de Pluma (ESPACIO &rarr; <code>/turtle1/set_pen</code>):</strong> La función <code>toggle_pen()</code> conmuta la variable booleana <code>self.pen_enabled</code> y envía una petición <code>SetPen.Request</code> fijando <code>req.off = 0</code> (activar pintado) o <code>req.off = 1</code> (desactivar pintado), permitiendo circular sin trazar línea cuando se desee.</li>
   <li><strong>Limpieza de Pantalla (C &rarr; <code>/clear</code>):</strong> La función <code>call_clear()</code> envía una solicitud de tipo <code>std_srvs/srv/Empty</code>, borrando las trayectorias dibujadas sobre el lienzo sin alterar las coordenadas actuales del robot.</li>
-  <li><strong>Reinicio Central Cenital (R &rarr; <code>/turtle1/teleport_absolute</code>):</strong> El servicio estándar <code>/reset</code> de Turtlesim restablece la tortuga orientada hacia la derecha (0 rad). Para acatar estrictamente la especificación (<em>"al centro de la pantalla y mirando hacia arriba"</em>), la función <code>call_reset_center_up()</code> utiliza <code>TeleportAbsolute.Request</code> fijando <code>x=5.5444</code>, <code>y=5.5444</code> y <code>theta = π / 2</code> radianes (90° exactos).</li>
+  <li><strong>Reinicio Central Cenital (R &rarr; <code>/turtle1/teleport_absolute</code>):</strong> El comando estándar <code>/reset</code> de Turtlesim orienta la tortuga hacia la derecha (0 rad). Para acatar estrictamente la especificación de diseño (<em>"al centro de la pantalla y mirando hacia arriba"</em>), la función <code>call_reset_center_up()</code> utiliza <code>TeleportAbsolute.Request</code> fijando <code>x=5.5444</code>, <code>y=5.5444</code> y <code>theta = π / 2</code> radianes (90° exactos).</li>
 </ul>
 
 <h3>2.3. Parámetros Dinámicos en Tiempo de Ejecución</h3>
@@ -267,7 +222,7 @@ El archivo <code>launch/turtlesim_teleop.launch.py</code> declara los argumentos
 
 <h2>4. Guía de Compilación y Comandos de Ejecución</h2>
 
-<p><strong>1. Compilación del espacio de trabajo (compilación limpia):</strong></p>
+<p><strong>1. Compilación del espacio de trabajo:</strong></p>
 <pre><code>cd ~/ROS/practica\ 1    # o dentro del espacio de trabajo ws
 colcon build --packages-select turtle_control
 source install/setup.bash</code></pre>
@@ -283,11 +238,11 @@ ros2 launch turtle_control turtlesim_teleop.launch.py speed:=3.5 log_level:=DEBU
 <pre><code>ros2 param set /teleop_turtle speed 5.0        # Incrementa la velocidad lineal en caliente
 ros2 param set /teleop_turtle log_level DEBUG   # Modifica la severidad de log del nodo</code></pre>
 
-<h2>5. Matriz de Cumplimiento de Requisitos del Enunciado</h2>
+<h2>5. Matriz de Cumplimiento de Requisitos y Especificaciones Técnicas</h2>
 <table class="word-table">
   <thead>
     <tr>
-      <th>Requisito del Enunciado</th>
+      <th>Requisito / Especificación Técnica</th>
       <th>Estado</th>
       <th>Mecanismo Técnico Implementado</th>
     </tr>
